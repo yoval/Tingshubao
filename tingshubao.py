@@ -7,9 +7,9 @@ Created on Mon Apr  4 00:44:02 2022
 import requests,re,json
 
 #书籍链接
-book_url = 'http://m.tingshubao.com/book/52.html'
+book_url = 'http://m.tingshubao.com/book/2167.html'
 #输出目录
-outfloder = r'C:\Users\fuwen\Desktop\tingshubao'
+outfloder = r'C:\Users\fuwen\Desktop\鬼吹灯全集'
 #下载方式
 DownloadType = 0 # 0 python下载，1 调用Aria2 下载
 
@@ -72,9 +72,9 @@ for audio_play_url in url_list:
     audio_name = re.findall('/(.*?)\?', download_url)[0]
     audio_name = audio_name.split('/')[-1]
     audio_name = book_name+'_'+audio_name
-    if DownloadType ==0:
+    if DownloadType ==1:
         Air2DownLoad(download_url,audio_name)
-    elif DownloadType ==1:
+    elif DownloadType ==0:
         PythonDownLoad(download_url,audio_name)
     else:
         print('下载方式配置错误！')
