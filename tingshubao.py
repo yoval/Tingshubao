@@ -69,7 +69,7 @@ def PythonDownLoad(DownloadUrl,FileName):
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36 Edg/100.0.1185.29'}
 book_name,url_list = get_book_list(book_url)
 if len(url_list) >end:
-    url_list = url_list[strat-1:end]
+    url_list = url_list[strat-1:end-1]
 else:
     url_list = url_list[strat-1:]
 for audio_play_url in url_list:
