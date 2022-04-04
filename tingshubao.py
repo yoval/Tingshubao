@@ -4,15 +4,17 @@ Created on Mon Apr  4 00:44:02 2022
 
 @author: fuwen
 """
-import requests,re,json
+import requests,re,json,time
 
 #书籍链接
-book_url = 'http://m.tingshubao.com/book/2167.html'
+book_url = 'http://m.tingshubao.com/book/3215.html'
 #输出目录
-outfloder = r'C:\Users\fuwen\Desktop\鬼吹灯全集'
+outfloder = r'C:\Users\fuwen\Desktop\庆余年'
 #下载方式
 DownloadType = 0 # 0 python下载，1 调用Aria2 下载
-
+#起始
+strat = 1
+end = 1000
 #通过书籍链接获得播放链接
 def get_book_list(book_url):
     resp = requests.get(book_url,headers = headers)
@@ -66,12 +68,16 @@ def PythonDownLoad(DownloadUrl,FileName):
 
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36 Edg/100.0.1185.29'}
 book_name,url_list = get_book_list(book_url)
-
+if len(url_list) >end:
+    url_list = url_list[strat-1:end]
+else:
+    url_list = url_list[strat-1:]
 for audio_play_url in url_list:
     download_url = get_download_url(audio_play_url)
     audio_name = re.findall('/(.*?)\?', download_url)[0]
     audio_name = audio_name.split('/')[-1]
     audio_name = book_name+'_'+audio_name
+    time.sleep(5)
     if DownloadType ==1:
         Air2DownLoad(download_url,audio_name)
     elif DownloadType ==0:
