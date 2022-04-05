@@ -26,8 +26,9 @@ def get_book_list(book_url):
 def get_download_url(audio_play_url):
     audio_play_response = requests.get(audio_play_url,headers = headers)
     audio_play_response.encoding = 'gb2312'
-    autdio_play_html = audio_play_response.text
-    encrypt_string = re.findall("FonHen_JieMa\('(.*?)'",autdio_play_html)[0]
+    audio_play_html = audio_play_response.text
+    audio_name = re.findall(r"no: '(.*?)'", audio_play_html)[0]
+    encrypt_string = re.findall("FonHen_JieMa\('(.*?)'",audio_play_html)[0]
     temp_list = []
     for temp in encrypt_string.split("*")[1:]:
         temp = chr(int(temp) & 0xffff)
@@ -36,7 +37,7 @@ def get_download_url(audio_play_url):
     audio_detail_url = "http://43.129.176.64/player/key.php?url="
     audio_api_url = audio_detail_url + end_url
     audio_down_url = requests.get(audio_api_url).json()['url']
-    return audio_down_url
+    return audio_down_url,audio_name
 
 #调用Air2下载
 JsonRpcUrl = 'http://localhost:6800/jsonrpc'
@@ -63,7 +64,7 @@ def PythonDownLoad(DownloadUrl,FileName):
     with open(outfloder+'\\'+FileName, 'wb') as f:
         f.write(res)
 
-frame3 = [[sg.Radio('内置下载器', "RADIO2", key = '-python-',size=(10, 1)),sg.Radio('Aria2', "RADIO2",key = '-aria2-',  size=(10, 1) ,default=True),sg.Text('RPC：'),sg.Input('http://localhost:6800/jsonrpc',key = '-RPC-',size=(50,1))],[sg.Text('书籍 ID：'),sg.Input('3215',key = '-bookid-',size=(8, 1)),sg.Text('开始：'),sg.Input('1',key = '-start-',size=(5, 1)),sg.Text('结束：'),sg.Input('10',key = '-end-',size=(5, 1))],]
+frame3 = [[sg.Radio('内置下载器', "RADIO2", key = '-python-',size=(10, 1)),sg.Radio('Aria2', "RADIO2",key = '-aria2-',  size=(10, 1) ,default=True),sg.Text('RPC：'),sg.Input('http://localhost:6800/jsonrpc',key = '-RPC-',size=(50,1))],[sg.Text('书籍 ID：'),sg.Input('3215',key = '-bookid-',size=(8, 1)),sg.Text('开始：'),sg.Input('1',key = '-start-',size=(5, 1)),sg.Text('结束：'),sg.Input('10',key = '-end-',size=(5, 1)),sg.Text('间隔：'),sg.Input('5',key = '-jiange-',size=(5, 1))],]
 layout = [
     [sg.Column([[sg.Frame('下载选项:', frame3,size=(480,80))]]),],
     [sg.Text('下载至目录：'),sg.Input(),sg.FolderBrowse('浏览',key = '-outfloder-')],
@@ -71,7 +72,7 @@ layout = [
     [sg.Text('输出日志：')],
     [sg.Output(size=(70, 6))],
     ]
-window = sg.Window('听书宝下载工具 v0.2', layout)
+window = sg.Window('听书宝下载工具 v0.3', layout)
 while True:
     event, values = window.Read()
     if event in (None, 'Cancel'):
@@ -82,23 +83,21 @@ while True:
     DownloadType = values['-aria2-']
     strat = values['-start-']
     end = values['-end-']
+    jiange = values['-jiange-']
     book_url = 'http://m.tingshubao.com/book/%s.html'%book_id
     count = int(strat)
     try:
         book_name,url_list = get_book_list(book_url)
     except:
         print('书籍信息获取失败！即将重试……')
-        time.sleep(5)
+        time.sleep(int(jiange))
         book_name,url_list = get_book_list(book_url)
     url_list=url_list[int(strat)-1:int(end)]
     for audio_play_url in url_list:
-        download_url = get_download_url(audio_play_url)
-        audio_name = re.findall('/(.*?)\?', download_url)[0]
-        audio_name = audio_name.split('/')[-1]
-        audio_name = book_name+'_'+audio_name
-        if len(audio_name)>20:
-            audio_name = book_name+'_'+'第%s集'%count
-            count+=1
+        download_url,audio_name = get_download_url(audio_play_url)
+        houzui = download_url.split('.')[-1]#获取后缀
+        houzui = houzui.split('?')[0]
+        audio_name = book_name + '_' + audio_name+'.'+houzui
         if DownloadType ==True:
             Air2DownLoad(download_url,audio_name)
         else:
