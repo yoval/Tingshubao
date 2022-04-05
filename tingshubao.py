@@ -14,7 +14,7 @@ outfloder = r'C:\Users\fuwen\Desktop\庆余年'
 DownloadType = 0 # 0 python下载，1 调用Aria2 下载
 #起始
 strat = 1
-end = 1000
+end = 2
 #通过书籍链接获得播放链接
 def get_book_list(book_url):
     resp = requests.get(book_url,headers = headers)
@@ -61,7 +61,7 @@ def Air2DownLoad(DownloadUrl,FileName):
         print('推送失败！请打开Aria2并确保正常运行。')
 #调用Python下载
 def PythonDownLoad(DownloadUrl,FileName):
-    res = requests.get(download_url,headers = headers).content
+    res = requests.get(DownloadUrl,headers = headers).content
     print('正在下载：%s'%FileName)
     with open(outfloder+'\\'+FileName, 'wb') as f:
         f.write(res)
@@ -69,7 +69,7 @@ def PythonDownLoad(DownloadUrl,FileName):
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36 Edg/100.0.1185.29'}
 book_name,url_list = get_book_list(book_url)
 if len(url_list) >end:
-    url_list = url_list[strat-1:end-1]
+    url_list = url_list[int(strat-1):int(end)]
 else:
     url_list = url_list[strat-1:]
 for audio_play_url in url_list:
