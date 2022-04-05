@@ -19,7 +19,7 @@ def get_book_list(book_url):
     resp = requests.get(book_url,headers = headers)
     resp.encoding = 'gb2312'
     html = resp.text
-    book_name = re.findall('<title>(.*?)有声小说 - 演播', html)[0]
+    book_name = re.findall('<title>(.*?)有声小说', html)[0]
     url_list = re.findall("'第.*?集' href='.*?html'", html)
     url_list = ['http://m.tingshubao.com'+i.split("'")[3] for i in url_list]#播放页面列表
     return book_name,url_list
