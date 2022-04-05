@@ -73,7 +73,7 @@ layout = [
     [sg.Text('输出日志：')],
     [sg.Output(size=(70, 6))],
     ]
-window = sg.Window('听书宝下载工具 v0.1', layout)
+window = sg.Window('听书宝下载工具 v0.2', layout)
 while True:
     event, values = window.Read()
     if event in (None, 'Cancel'):
