@@ -10,17 +10,15 @@ import PySimpleGUI as sg
 import os
 import sys
 os.environ['REQUESTS_CA_BUNDLE'] =  os.path.join(os.path.dirname(sys.argv[0]), 'cacert.pem')
-
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36 Edg/100.0.1185.29'}
 sg.theme('GreenTan')
-
 #通过书籍链接获得播放链接
 def get_book_list(book_url):
     resp = requests.get(book_url,headers = headers)
     resp.encoding = 'gb2312'
     html = resp.text
-    book_name = re.findall('<title>(.*?)有声小说', html)[0]
-    url_list = re.findall("'第.*?集' href='.*?html'", html)
+    book_name = re.findall('<h1 class="book-title">(.*?)</h1>', html)[0]
+    url_list = re.findall("'第.*?' href='.*?html'", html)
     url_list = ['http://m.tingshubao.com'+i.split("'")[3] for i in url_list]#播放页面列表
     return book_name,url_list
 
@@ -85,6 +83,7 @@ while True:
     strat = values['-start-']
     end = values['-end-']
     book_url = 'http://m.tingshubao.com/book/%s.html'%book_id
+    count = int(strat)
     try:
         book_name,url_list = get_book_list(book_url)
     except:
@@ -97,6 +96,9 @@ while True:
         audio_name = re.findall('/(.*?)\?', download_url)[0]
         audio_name = audio_name.split('/')[-1]
         audio_name = book_name+'_'+audio_name
+        if len(audio_name)>20:
+            audio_name = book_name+'_'+'第%s集'%count
+            count+=1
         if DownloadType ==True:
             Air2DownLoad(download_url,audio_name)
         else:

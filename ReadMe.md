@@ -9,3 +9,6 @@ Gui版exe已打包下载地址：https://fuwenyue.lanzouf.com/iT4xN02oem5i
 `pip install -r requirements.txt`
 
 `Pyinstaller -F -w tingshubaoGui.py -i favicon.ico`
+
+打包后exe文件与cacert.pem同目录即可。
+
