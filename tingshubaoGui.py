@@ -3,6 +3,8 @@
 Created on Tue Apr  5 00:14:16 2022
 
 @author: fuwen
+
+喜马拉雅、懒人听书
 """
 import requests,re,json,time
 import PySimpleGUI as sg
@@ -37,6 +39,11 @@ def get_download_url(audio_play_url):
     audio_detail_url = "http://43.129.176.64/player/key.php?url="
     audio_api_url = audio_detail_url + end_url
     audio_down_url = requests.get(audio_api_url).json()['url']
+    if 'audio.xmcdn.com' in audio_down_url:
+        print('喜马拉雅源……')
+        audio_down_url = audio_down_url.replace('t3344t.tingchina.com/','')
+    else:
+        print('听中国源……')
     return audio_down_url,audio_name
 
 #调用Air2下载
@@ -72,7 +79,7 @@ layout = [
     [sg.Text('输出日志：')],
     [sg.Output(size=(70, 6))],
     ]
-window = sg.Window('听书宝下载工具 v0.3', layout)
+window = sg.Window('听书宝下载工具 v0.4', layout)
 while True:
     event, values = window.Read()
     if event in (None, 'Cancel'):
