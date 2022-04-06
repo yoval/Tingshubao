@@ -47,8 +47,8 @@ def get_download_url(audio_play_url):
     return audio_down_url,audio_name
 
 #调用Air2下载
-JsonRpcUrl = 'http://localhost:6800/jsonrpc'
-def Air2DownLoad(DownloadUrl,FileName):
+#JsonRpcUrl = 'http://localhost:6800/jsonrpc'
+def Air2DownLoad(DownloadUrl,FileName,JsonRpcUrl):
     PostData = {
         "jsonrpc":"2.0",
         "method":"aria2.addUri",
@@ -71,7 +71,7 @@ def PythonDownLoad(DownloadUrl,FileName):
     with open(outfloder+'\\'+FileName, 'wb') as f:
         f.write(res)
 
-frame3 = [[sg.Radio('内置下载器', "RADIO2", key = '-python-',size=(10, 1)),sg.Radio('Aria2', "RADIO2",key = '-aria2-',  size=(10, 1) ,default=True),sg.Text('RPC：'),sg.Input('http://localhost:6800/jsonrpc',key = '-RPC-',size=(50,1))],[sg.Text('书籍 ID：'),sg.Input('3215',key = '-bookid-',size=(8, 1)),sg.Text('开始：'),sg.Input('1',key = '-start-',size=(5, 1)),sg.Text('结束：'),sg.Input('10',key = '-end-',size=(5, 1)),sg.Text('间隔：'),sg.Input('5',key = '-jiange-',size=(5, 1))],]
+frame3 = [[sg.Radio('内置下载器', "RADIO2", key = '-python-',size=(10, 1)),sg.Radio('Aria2', "RADIO2",key = '-aria2-',  size=(10, 1) ,default=True),sg.Text('RPC：'),sg.Input('http://localhost:16800/jsonrpc',key = '-RPC-',size=(50,1))],[sg.Text('书籍 ID：'),sg.Input('3215',key = '-bookid-',size=(8, 1)),sg.Text('开始：'),sg.Input('1',key = '-start-',size=(5, 1)),sg.Text('结束：'),sg.Input('10',key = '-end-',size=(5, 1)),sg.Text('间隔：'),sg.Input('5',key = '-jiange-',size=(5, 1))],]
 layout = [
     [sg.Column([[sg.Frame('下载选项:', frame3,size=(480,80))]]),],
     [sg.Text('下载至目录：'),sg.Input(),sg.FolderBrowse('浏览',key = '-outfloder-')],
@@ -79,7 +79,7 @@ layout = [
     [sg.Text('输出日志：')],
     [sg.Output(size=(70, 6))],
     ]
-window = sg.Window('听书宝下载工具 v0.4', layout)
+window = sg.Window('听书宝下载工具 v0.5', layout)
 while True:
     event, values = window.Read()
     if event in (None, 'Cancel'):
@@ -106,7 +106,7 @@ while True:
         houzui = houzui.split('?')[0]
         audio_name = book_name + '_' + audio_name+'.'+houzui
         if DownloadType ==True:
-            Air2DownLoad(download_url,audio_name)
+            Air2DownLoad(download_url,audio_name,RPC)
         else:
             PythonDownLoad(download_url,audio_name)
 window.Close()
