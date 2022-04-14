@@ -20,8 +20,8 @@ def get_book_list(book_url):
     resp.encoding = 'gb2312'
     html = resp.text
     book_name = re.findall('<h1 class="book-title">(.*?)</h1>', html)[0]
-    url_list = re.findall("'第.*?' href='.*?html'", html)
-    url_list = ['http://m.tingshubao.com'+i.split("'")[3] for i in url_list]#播放页面列表
+    url_list = re.findall("title='.*?' href='(.*?html)'", html)
+    url_list = ['http://m.tingshubao.com'+i for i in url_list]#播放页面列表
     return book_name,url_list
 
 #通过播放链接获得下载链接
@@ -79,7 +79,7 @@ layout = [
     [sg.Text('输出日志：')],
     [sg.Output(size=(70, 6))],
     ]
-window = sg.Window('听书宝下载工具 v0.5', layout)
+window = sg.Window('听书宝下载工具 v0.6', layout)
 while True:
     event, values = window.Read()
     if event in (None, 'Cancel'):
